@@ -690,9 +690,10 @@ XE_COMPLEX_ARG([xft],
 		[Xft],
 		[`emacs' (buffers), `menubars', `tabs', and `gauges'],
 		[X11, Xft, Xrender, freetype, and fontconfig],
-		[`noemacs, nomenubars, notabs, nogauges'])],
-	[],[],
-	[XE_COMPLEX_OPTION([emacs],[no]),
+		[`noemacs, nomenubars, notabs, nogauges'.
+                 The default when selected is `emacs, nomenubars, notabs, nogauges'])],
+	[],[with_xft_emacs=no],
+	[XE_COMPLEX_OPTION([emacs],[yes]),
 	XE_COMPLEX_OPTION([menubars],[no]),
 	XE_COMPLEX_OPTION([tabs],[no]),
 	XE_COMPLEX_OPTION([gauges],[no])])
@@ -2238,18 +2239,25 @@ fi
 
 dnl If we're specifying XEMACS_CC, it'd better be in the same family
 dnl as CC or the following flag calculations are bogus.
-dnl #### We may want to actually error and abort here, but I am not sure.
+dnl No error/abort; detection is too fragile.
+
+xemacs_cc_cc_mismatch=no
 if test "$CC" != "$XEMACS_CC"; then
-  if test "$XEMACS_CC" = "g++" -a "$GCC" != "yes"; then
-    AC_MSG_WARN([CC and g++ are mismatched; XE_CFLAGS may be wrong])
-    xemacs_cc_cc_mismatch=yes
-  elif test -n "$GCC" -a "$XEMACS_CC" != "g++"; then
-    AC_MSG_WARN([gcc and XEMACS_CC are mismatched; XE_CFLAGS may be wrong])
-    xemacs_cc_cc_mismatch=yes
+  case "$XEMACS_CC" in
+  *g++* )
+    if test "$GCC" != "yes"; then
+      AC_MSG_WARN([CC and g++ are mismatched; XE_CFLAGS may be wrong])
+      xemacs_cc_cc_mismatch=yes ;;
+  esac
+  if test -n "$GCC"; then
+    case $XEMACS_CC in
+    *g++* )
+      ;;
+    * )
+      AC_MSG_WARN([gcc and XEMACS_CC are mismatched; XE_CFLAGS may be wrong])
+      xemacs_cc_cc_mismatch=yes ;;
+    esac
   dnl #### Add other detectable mismatches here.
-  else
-    xemacs_cc_cc_mismatch=no
-  fi
 fi
 
 dnl Calculate optimization flags.  These will be off by default in beta
@@ -3426,7 +3434,7 @@ dnl Avoid re-AC_DEFINE-ing xmkmf symbols we've already defined above.
 
   AC_MSG_CHECKING(the version of X11 being used)
   AC_RUN_IFELSE([AC_LANG_SOURCE([#include <X11/Intrinsic.h>
-    int main(int c, char *v[]) { return c>1 ? XlibSpecificationRelease : 0; }])],
+    int main(int c, char **v) { return c>1 ? XlibSpecificationRelease : 0; }])],
     [./conftest foobar; x11_release=$?],[x11_release=4],[x11_release=4])
   AC_MSG_RESULT(R${x11_release})
   AC_DEFINE_UNQUOTED(THIS_IS_X11R${x11_release})
@@ -3540,7 +3548,7 @@ extern Bool XRegisterIMInstantiateCallback(
       AC_DEFINE(HAVE_FONTCONFIG)
       AC_DEFINE(USE_XFT)
       dnl Due to interactions with other libraries, must postpone AC_DEFINE
-      dnl of USE_XFT_MENUBARS, USE_XFT_TABS, and USE_XFT_GAUGE.
+      dnl of USE_XFT_MENUBARS, USE_XFT_TABS, and USE_XFT_GAUGES.
       unset xft_includes_found
     fi
   fi
@@ -4429,11 +4437,11 @@ if test "$with_xft_tabs" != "no" ; then
   fi
 fi
 dnl this is not in xft reloaded #3
-if test "$with_xft_gauge" != "no" ; then
+if test "$with_xft_gauges" != "no" ; then
   if test "$with_xft_emacs" = "yes" -a "$enable_widgets" != "no" ; then
-    with_xft_gauge="yes"
+    with_xft_gauges="yes"
   else
-    with_xft_gauge="no"
+    with_xft_gauges="no"
   fi
 fi
 
@@ -4526,7 +4534,7 @@ test "$enable_widgets"    = "motif"  && AC_DEFINE(LWLIB_WIDGETS_MOTIF)
 
 test "$with_xft_menubars" = "yes"  && AC_DEFINE(USE_XFT_MENUBARS)
 test "$with_xft_tabs" = "yes"  && AC_DEFINE(USE_XFT_TABS)
-test "$with_xft_gauge" = "yes"  && AC_DEFINE(USE_XFT_GAUGE)
+test "$with_xft_gauges" = "yes"  && AC_DEFINE(USE_XFT_GAUGES)
 
 dnl ----------------------
 dnl Mule-dependent options
@@ -5574,7 +5582,7 @@ dnl Unfortunately, just because we can link doesn't mean we can run.
 dnl One of the above link tests may have succeeded but caused resulting
 dnl executables to fail to run.  Also any tests using AC_RUN_IFELSE will
 dnl have reported incorrect results.
-AC_RUN_IFELSE([AC_LANG_SOURCE([int main(int c,char *v[]){return 0;}])],[:],[
+AC_RUN_IFELSE([AC_LANG_SOURCE([int main(int c,char **v){return 0;}])],[:],[
   echo ""
   echo "*** PANIC *** The C compiler can no longer build working executables."
   echo "*** PANIC *** Please examine the tail of config.log for runtime errors."
@@ -6078,7 +6086,7 @@ if test "$with_xft_tabs" = "yes"; then
   echo "    - Using Xft to render antialiased fonts in tab controls."
   echo "      WARNING: This feature will be replaced with a face."
 fi
-if test "$with_xft_gauge" = "yes"; then
+if test "$with_xft_gauges" = "yes"; then
   echo "    - Using Xft to render antialiased fonts in progress bars."
   echo "      WARNING: This feature will be replaced with a face."
   echo "      WARNING: This feature not yet implemented; setting ignored."

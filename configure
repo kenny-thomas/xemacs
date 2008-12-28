@@ -1538,7 +1538,8 @@ Window-system options
                           `gauges'. Prefix component with `no' to disable its
                           use of Xft. Requires X11, Xft, Xrender, freetype,
                           and fontconfig support. Default is `noemacs,
-                          nomenubars, notabs, nogauges'.
+                          nomenubars, notabs, nogauges'. The default when
+                          selected is `emacs, nomenubars, notabs, nogauges'.
   --with-gtk              Support GTK on the X Window System. (EXPERIMENTAL)
   --with-gnome            Support GNOME on the X Window System. (EXPERIMENTAL)
   --with-msw              Support MS Windows as a window system (only under
@@ -2888,12 +2889,12 @@ _ACEOF
 fi;
 
 _xft_notfirst=""
-_xft_emacs_default=no
+_xft_emacs_default=yes
 _xft_menubars_default=no
 _xft_tabs_default=no
 _xft_gauges_default=no
 _xft_types="emacs menubars tabs gauges"
-_xft_default="noemacs,nomenubars,notabs,nogauges"
+_xft_default="emacs,nomenubars,notabs,nogauges"
 
 # If --with-xft or --without-xft were given then copy the value to the
 # equivalent enable_xft variable.
@@ -2970,7 +2971,7 @@ for y in $_xft_types; do
     eval "enable_xft_$y=\$_xft_${y}_default"
     unset _xft_${y}_default
 done
-
+with_xft_emacs=no
 fi;
 # If --with-gtk or --without-gtk were given then copy the value to the
 # equivalent enable_gtk variable.
@@ -19011,7 +19012,7 @@ cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
 #include <X11/Intrinsic.h>
-    int main(int c, char *v) { return c>1 ? XlibSpecificationRelease : 0; }
+    int main(int c, char **v) { return c>1 ? XlibSpecificationRelease : 0; }
 _ACEOF
 rm -f conftest$ac_exeext
 if { (ac_try="$ac_link"
@@ -27332,11 +27333,11 @@ if test "$with_xft_tabs" != "no" ; then
     with_xft_tabs="no"
   fi
 fi
-if test "$with_xft_gauge" != "no" ; then
+if test "$with_xft_gauges" != "no" ; then
   if test "$with_xft_emacs" = "yes" -a "$enable_widgets" != "no" ; then
-    with_xft_gauge="yes"
+    with_xft_gauges="yes"
   else
-    with_xft_gauge="no"
+    with_xft_gauges="no"
   fi
 fi
 
@@ -27528,8 +27529,8 @@ test "$with_xft_tabs" = "yes"  && cat >>confdefs.h <<\_ACEOF
 #define USE_XFT_TABS 1
 _ACEOF
 
-test "$with_xft_gauge" = "yes"  && cat >>confdefs.h <<\_ACEOF
-#define USE_XFT_GAUGE 1
+test "$with_xft_gauges" = "yes"  && cat >>confdefs.h <<\_ACEOF
+#define USE_XFT_GAUGES 1
 _ACEOF
 
 
@@ -38856,7 +38857,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-int main(int c,char *v){return 0;}
+int main(int c,char **v){return 0;}
 _ACEOF
 rm -f conftest$ac_exeext
 if { (ac_try="$ac_link"
@@ -39582,7 +39583,7 @@ if test "$with_xft_tabs" = "yes"; then
   echo "    - Using Xft to render antialiased fonts in tab controls."
   echo "      WARNING: This feature will be replaced with a face."
 fi
-if test "$with_xft_gauge" = "yes"; then
+if test "$with_xft_gauges" = "yes"; then
   echo "    - Using Xft to render antialiased fonts in progress bars."
   echo "      WARNING: This feature will be replaced with a face."
   echo "      WARNING: This feature not yet implemented; setting ignored."

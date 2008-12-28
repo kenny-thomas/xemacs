@@ -4,6 +4,27 @@
 	New file, testing the functionality of #'query-coding-region and
 	#'query-coding-string.
 
+2008-09-27  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* automated/regexp-tests.el: Add test for at_dot regexp.
+
+2008-09-27  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* automated/regexp-tests.el: `with-string-as-buffer-contents'
+	leaves point at end of buffer, so must move point to beginning.
+
+2008-08-27  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* automated/regexp-tests.el: 
+	Add a few basic #'skip-chars-forward, #'skip-chars-backward
+	tests. 
+
+2008-08-10  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* automated/mule-tests.el (featurep): Update the list of character
+	sets in etc/HELLO to reflect that we've deleted the
+	XEmacs-specific Arabic character sets.
+
 2008-05-21  Aidan Kehoe  <kehoea@parhasard.net>
 
 	* automated/mule-tests.el (featurep): 

@@ -12,12 +12,170 @@
 	Make the safe-chars and safe-charsets slots available in these
 	headers. 
 
+2008-12-22  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* symbols.c (Fdefine_function): 
+	* eval.c (define_function): 
+	Record explicitly that we're defining a function in the load
+	history, in both these files. 
+
+2008-12-22  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* faces.c (Fbuilt_in_face_specifiers): 
+	Document that we're returning a copy. 
+
+2008-12-21  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* faces.c (Fbuilt_in_face_specifiers): 
+	Don't simply warn the user not to modify
+	Vbuilt_in_face_specifiers, enforce this by returning a copy of the
+	list. 
+
+2008-11-02  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	G++ 4.3 complains a lot about implicit conversions of string
+	literals (const char *) to char *.  Shut it up.
+
+	* console-x.h:
+	* EmacsFrame.c:
+	* EmacsManager.c:
+	* EmacsShell-sub.c:
+	#include ../lwlib/xt-wrappers.h.
+	Cast class name to String.
+	Cast action names to String.
+	Rewrite resources to use Xt_RESOURCE.
+
+	* console-x.h:
+	Move Xt_SET_VALUE and Xt_GET_VALUE to ../lwlib/xt-wrappers.h.
+
+	* console-x.h (describe_XRectangle):
+	* input-method-xlib.c (describe_XRectangle):
+	* emacs.c (argmatch):
+	* emacs.c (check_compatible_window_system):
+	* emodules.c (Fload_module):
+	* emodules.c (Funload_module):
+	* event-stream.c (external_debugging_print_event):
+	* file-coding.h (struct subsidiary_type):
+	* file-coding.c (struct subsidiary_type):
+	* file-coding.c (setup_eol_coding_systems):
+	* file-coding.c (make_coding_system_1):
+	* file-coding.c (make_internal_coding_system):
+	* gif_io.c (GifErrorString:
+	* gif_io.c (GetGifError):
+	* input-method-xlib.c (XIM_init_frame):
+	* mule-coding.c (ccl_putprop):
+	* print.c (printing_major_badness):
+	* redisplay.c (generate_fstring_runes):
+	Declare String or char * argument or variable as const.
+
+	* EmacsFrame.c (EmacsFrameSetCharSize):
+	* EmacsShell-sub.c (update_size_hints_internal):
+	* EmacsShell-sub.c (SuperClassRootGeometryManager):
+	* device-x.c (emacs_options):
+	* device-x.c (compute_x_app_name):
+	* device-x.c (have_xemacs_resources_in_xrdb):
+	* device-x.c (x_init_device):
+	* event-Xt.c (x_fallback_resources):
+	* event-Xt.c (widgetActionsList):
+	* event-Xt.c (emacs_Xt_event_add_widget_actions):
+	* frame-x.c (x_wm_set_cell_size):
+	* frame-x.c (x_wm_set_variable_size):
+	* frame-x.c (x_set_frame_text_value):
+	* frame-x.c (x_initialize_frame_size):
+	* frame-x.c (x_create_widgets):
+	* frame-x.c (x_set_frame_icon):
+	* frame-x.c (x_set_frame_position):
+	* frame-x.c (x_update_frame_external_traits):
+	* glyphs-x.c (x_redisplay_widget):
+	* glyphs-x.c (update_tab_widget_face):
+	* glyphs-x.c (x_widget_instantiate):
+	* glyphs-x.c (x_button_instantiate):
+	* glyphs-x.c (x_progress_gauge_redisplay):
+	* glyphs-x.c (x_tab_control_redisplay):
+	* menubar-x.c (make_dummy_xbutton_event):
+	Use Xt_SET_ARG, Xt_SET_VALUE, and Xt_GET_VALUE instead of raw Xt
+	equivalents.
+	Declare String or char * argument or local variable as const.
+	Cast string literals to char* (or equivalent).
+
+	* input-method-xlib.c:
+	Use Xt_RESOURCE.
+
+2008-11-01  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* regex.c (re_search_2): Fix at_dot by changing charpos to bytepos.
+	From Julian Bradfield <18654.1143.304851.782755@krk.inf.ed.ac.uk>.
+
+2008-11-01  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* mule-ccl.c (ccl_driver): Fix off-by-one error.
+	By Julian Bradfield in <18691.16568.526264.972026@krk.inf.ed.ac.uk>.
+
+2008-10-25  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* lisp.h (static_pro): Cast out a warning.
+	g++ 4.3 complains about the conversion of const char to char.
+	These end up in a dynarray, so we would need to define a whole new
+	class of dynarray just to handle the const char stuff.
+
+2008-08-27  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* symbols.c (Fuser_variable_p): 
+	(map_varalias_chain): 
+	Use EQ() and !EQ(), don't compare two Lisp_Objects using == and
+	!=. Fixes the union build, thank you Robert Delius Royar. 
+
+2008-08-23  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* eval.c (Fuser_variable_p): Moved to symbols.c
+	* symbols.c (Fcustom_variable_p): Moved here from custom.el. 
+	(user_variable_alias_check_fun): Mapper function used in
+	`user-variable-p'. 
+	(Fuser_variable_p): Moved here from eval.c, to allow it to examine
+	the variable alias chain. Expanded to check each entry in the
+	variable alias chain for signs of being a user variable;
+	documentation updated, noting the differences between GNU's
+	behaviour and ours (ours is a little more sensible)
+	(map_varalias_chain): New.
+	Given a C function, call it at least once for each symbol in a
+	symbol's varalias chain, signalling an error if there's a cycle,
+	and returning immediately if the function returns something other
+	than Qzero. 
+	(Fdefvaralias): Correct the use of the word "alias" in the
+	docstring and in the argument name. Motivate this in a
+	comment. Add support for a DOCSTRING argument, something GNU has
+	too, and document this
+	* gc.c (vars_of_gc): Start the docstring of
+	`garbage-collection-messages' with an asterisk, to indicate that
+	it's a user variable. 
+
+2008-08-09  Aidan Kehoe  <kehoea@parhasard.net>
+
+	Integrate Romain Francoise' 2005-09-14 (pre-GPLV3) GNU change,
+	which can allow much better performace with some stupid
+	filesystems:
+	* fileio.c (write_region_inhibit_fsync): New variable.
+	(Fwrite_region): Use it to skip call to fsync.
+	(syms_of_fileio): Initialize it.
+
+2008-08-10  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* objects-xlike-inc.c (charset_table): Remove the entry for
+	Vcharset_arabic_iso8859_7, thank you Robert Delius Royar.
+
+=======
+>>>>>>> other
 2008-08-05  Aidan Kehoe  <kehoea@parhasard.net>
 
 	* mule-charset.c (complex_vars_of_mule_charset): 
 	Remove Vcharset_arabic_iso8859_7.
 	* lisp.h: Remove Vcharset_arabic_iso8859_7.
 	See commentary in lisp/mule/iso-with-esc.el for motivation. 
+
+2008-08-03  Mats Lidell  <matsl@xemacs.org>
+
+	* config.h.in: Renamed USE_XFT_GAUGE to USE_XFT_GAUGES in sync
+	with configure.ac.
 
 2008-07-20  John Paul Wallington  <jpw@pobox.com>
 

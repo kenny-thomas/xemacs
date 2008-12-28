@@ -51,9 +51,76 @@
 	* mule/mule-coding.el (escape-quoted): 
 	* mule/mule-coding.el (iso-2022-lock): 
 	Add safe-charsets properties for all these coding systems. 
-	
-2008-08-09  Aidan Kehoe  <kehoea@parhasard.net>
 
+2008-12-22  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* loadhist.el (symbol-file): 
+	Add support for differentiating between variables and functions to
+	#'symbol-file. 
+	* help.el (describe-function-1): 
+	(describe-variable): 
+	Call #'symbol-function explicitly with a 'defun or 'defvar
+	argument, depending on whether we're looking for a variable or a
+	function. 
+	* cus-face.el (custom-declare-face): 
+	Record information about the face in the load history; code taken
+	from GNU, pre-GPLv3 revision 1.45.
+
+2008-10-29  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* bytecomp.el (byte-compile-file): Protect encoding from latin-unity.
+
+2008-10-28  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* version.el (xemacs-betaname): Fix docstring typo.  (Thanks, Ville!)
+
+2008-09-30  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* version.el (xemacs-betaname):
+	Document relation to other version variables.
+
+2008-09-27  Stephen J. Turnbull  <stephen@xemacs.org>
+
+	* subr.el (with-string-as-buffer-contents):
+	Document initial position of point.
+
+2008-08-31  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* window.el (only-window-p): New.
+	Check if WINDOW is the only window in some context, normally its
+	frame.
+	(one-window-p): 
+	Implemented this in terms of #'only-window-p, calling it on the
+	selected window. 
+	(window-buffer-height): Uncomment this, make it work. 
+	(count-screen-lines): Support a BUFFER argument. 
+	(fit-window-to-buffer): Uncomment this, correct its implementation
+	to work with XEmacs. 
+	* help.el (temp-buffer-resize-mode): New. Name taken from GNU,
+	implementation our own.
+	* (resize-temp-buffer-window): New. GNU-compatible alias for
+	#'shrink-window-if-larger-than-buffer.
+	* dumped-lisp.el (preloaded-file-list): Move easy-mmode before
+	help, now that the latter uses #'define-minor-mode.
+	* frame.el: Point to #'temp-buffer-resize-mode in a comment.
+	Some of this code is from GNU; help.el CVS version 1.327 of
+	2007-03-21, window.el CVS version 1.122, of 2007-06-24. Both these
+	are GPLV2 or later. 
+
+2008-08-27  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* subr.el (skip-chars-quote): 
+	Correct the implementation, following the docstring of
+	#'skip-char-forward more closely rather than the documentation of
+	character classes in the Lispref. 
+
+2008-08-23  Aidan Kehoe  <kehoea@parhasard.net>
+
+	* custom.el: Move #'custom-variable-p to C, since it's now called
+	from #'user-variable-p. 
+
+2008-08-23  Aidan Kehoe  <kehoea@parhasard.net>
+	
 	* mule/mule-coding.el (make-8-bit-coding-system): 
 	* mule/general-late.el (posix-charset-to-coding-system-hash): 
 	Use #'skip-chars-quote as appropriate. 
